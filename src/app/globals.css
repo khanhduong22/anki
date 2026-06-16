@@ -73,6 +73,85 @@ body {
   padding-bottom: calc(var(--safe-bottom) + 8px);
 }
 
+.admin-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin: 0 auto;
+  position: relative;
+  background: radial-gradient(circle at top, #14172B 0%, #0B0D19 80%);
+  padding-top: calc(var(--safe-top) + 8px);
+  padding-bottom: calc(var(--safe-bottom) + 8px);
+  overflow-y: auto;
+}
+
+.admin-main-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-editor-placeholder {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .admin-container {
+    max-width: 1200px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  
+  .admin-main-layout {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  .admin-editor-pane .drawer-overlay {
+    position: sticky;
+    top: 24px;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    z-index: auto;
+    display: block;
+    pointer-events: auto;
+  }
+  
+  .admin-editor-pane .drawer-content {
+    width: 100%;
+    max-height: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  .admin-editor-placeholder {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 60px 20px;
+    text-align: center;
+    background: rgba(22, 28, 45, 0.2);
+    min-height: 400px;
+    position: sticky;
+    top: 24px;
+  }
+}
+
 /* --- 3D Flipping Card Container --- */
 
 .perspective-container {
@@ -272,4 +351,33 @@ pre {
   border-radius: 12px;
   padding: 12px;
   overflow-x: auto;
+  position: relative;
+}
+
+/* Touch Action locks horizontal swipe to prevent history navigation while dragging card stack */
+.perspective-container {
+  touch-action: pan-y;
+}
+
+/* Custom Outlines via :focus-visible */
+input:focus-visible, 
+textarea:focus-visible, 
+select:focus-visible, 
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Touch targets bump on coarse pointer viewports */
+@media (pointer: coarse) {
+  button, 
+  a.p-2, 
+  a.p-3 {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

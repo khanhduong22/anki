@@ -148,7 +148,7 @@ export default function AdminContent() {
   );
 
   return (
-    <div className="main-container overflow-y-auto select-text px-4 pb-12">
+    <div className="admin-container overflow-y-auto select-text px-4 pb-12">
       {/* Header */}
       <header className="py-4 flex items-center gap-4 border-b border-white/5 mb-6">
         <Link href="/" className="p-2 rounded-xl hover:bg-white/5 active:scale-95 transition-all text-gray-400 hover:text-gray-200">
@@ -196,172 +196,214 @@ export default function AdminContent() {
         </div>
       )}
 
-      {/* TAB 1: LIST CRUD */}
-      {adminTab === "list" && (
-        <div className="space-y-4">
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 w-4 h-4 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Tìm câu hỏi, đáp án, tag..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-indigo-500/50"
-              />
-            </div>
-            <button
-              onClick={handleOpenCreate}
-              className="flex items-center gap-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all text-xs font-bold rounded-xl text-white cursor-pointer"
-            >
-              <Plus className="w-4 h-4" /> Thêm thẻ
-            </button>
-          </div>
-
-          <div className="space-y-3">
-            {filteredCards.length > 0 ? (
-              filteredCards.map((card) => (
-                <div 
-                  key={card.id}
-                  className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-white/10 transition-colors"
-                >
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="space-y-1">
-                      <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 bg-indigo-500/10 text-indigo-400 rounded-full">
-                        {card.category}
-                      </span>
-                      <h3 className="text-sm font-bold text-gray-200 line-clamp-2 mt-2 leading-relaxed">
-                        {card.question}
-                      </h3>
-                    </div>
-                    
-                    <div className="flex gap-1 shrink-0">
-                      <button
-                        onClick={() => handleOpenEdit(card)}
-                        className="p-1.5 rounded-lg hover:bg-white/5 text-gray-400 hover:text-indigo-400 transition-colors"
-                        title="Sửa"
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteCard(card.id!)}
-                        className="p-1.5 rounded-lg hover:bg-white/5 text-gray-400 hover:text-rose-500 transition-colors"
-                        title="Xóa"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-12 text-xs text-gray-500 font-semibold">Không tìm thấy thẻ nào.</div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: DATA IMPORT/EXPORT (EMBEDDED IMPORTEXPORT COMPONENT) */}
-      {adminTab === "data" && (
-        <div className="bg-white/[0.01] border border-white/5 rounded-24 p-5">
-          <ImportExport 
-            onClose={() => setAdminTab("list")}
-            onRefreshCards={loadCards}
-          />
-        </div>
-      )}
-
-      {/* --- Overlay Card Editor Modal --- */}
-      {isEditorOpen && (
-        <div className="drawer-overlay" onClick={() => setIsEditorOpen(false)}>
-          <div className="drawer-content" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-gray-100 flex items-center gap-2">
-                <Database className="w-5 h-5 text-indigo-400" />
-                {formMode === "create" ? "Thêm Thẻ Mới" : "Chỉnh Sửa Thẻ"}
-              </h3>
-              <button 
-                onClick={() => setIsEditorOpen(false)}
-                className="p-1 rounded-full hover:bg-white/10 transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveCard} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-400">Câu hỏi *</label>
-                <textarea
-                  required
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Nhập câu hỏi..."
-                  rows={2}
-                  className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl p-3 text-sm text-gray-200 focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-400">Câu trả lời *</label>
-                <textarea
-                  required
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="Nhập nội dung câu trả lời..."
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl p-3 text-sm text-gray-200 focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-400">Code mẫu (không bắt buộc)</label>
-                <textarea
-                  value={codeSnippet}
-                  onChange={(e) => setCodeSnippet(e.target.value)}
-                  placeholder="Dán code snippet mẫu..."
-                  rows={3}
-                  className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl p-3 text-xs font-mono text-emerald-400 focus:outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-400">Chủ đề (Category)</label>
+      {/* Responsive Grid Layout */}
+      <div className="admin-main-layout">
+        <div className="admin-list-pane">
+          {/* TAB 1: LIST CRUD */}
+          {adminTab === "list" && (
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-3.5 w-4 h-4 text-gray-500" />
                   <input
                     type="text"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    placeholder="VD: SQL, Database, JS"
-                    className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:outline-none"
+                    placeholder="Tìm câu hỏi, đáp án, tag..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-200 focus:outline-none focus:border-indigo-500/50"
                   />
                 </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-400">Độ khó (Difficulty)</label>
-                  <select
-                    value={difficulty}
-                    onChange={(e) => setDifficulty(e.target.value as Card["difficulty"])}
-                    className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none"
-                  >
-                    <option value="Junior">Junior</option>
-                    <option value="Mid">Mid</option>
-                    <option value="Senior">Senior</option>
-                    <option value="Tech Lead">Tech Lead</option>
-                  </select>
-                </div>
+                <button
+                  onClick={handleOpenCreate}
+                  className="flex items-center gap-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all text-xs font-bold rounded-xl text-white cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" /> Thêm thẻ
+                </button>
               </div>
 
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all rounded-xl font-semibold text-white shadow-lg shadow-indigo-600/20 cursor-pointer"
-              >
-                <Save className="w-4 h-4" />
-                Lưu Thẻ Học Tập
-              </button>
-            </form>
-          </div>
+              <div className="space-y-3">
+                {filteredCards.length > 0 ? (
+                  filteredCards.map((card) => (
+                    <div 
+                      key={card.id}
+                      className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-white/10 transition-colors"
+                    >
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 bg-indigo-500/10 text-indigo-400 rounded-full">
+                              {card.category}
+                            </span>
+                            <span className={`text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${
+                              card.difficulty === "Junior" ? "bg-emerald-500/10 text-emerald-400" :
+                              card.difficulty === "Mid" ? "bg-amber-500/10 text-amber-400" :
+                              card.difficulty === "Senior" ? "bg-rose-500/10 text-rose-400" : "bg-purple-500/10 text-purple-400"
+                            }`}>
+                              {card.difficulty}
+                            </span>
+                            <span className="text-[9px] text-gray-500 font-semibold">
+                              🔁 {card.repetitions} • Int: {card.interval}d • EF: {card.easeFactor}
+                            </span>
+                          </div>
+                          <h3 className="text-sm font-bold text-gray-200 mt-2 leading-relaxed">
+                            {card.question}
+                          </h3>
+                          <p className="text-xs text-gray-400 line-clamp-2 mt-1 font-medium leading-relaxed">
+                            {card.answer}
+                          </p>
+                        </div>
+                        
+                        <div className="flex gap-1 shrink-0">
+                          <button
+                            onClick={() => handleOpenEdit(card)}
+                            className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-indigo-400 transition-colors active:scale-90"
+                            title="Sửa"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCard(card.id!)}
+                            className="p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-rose-500 transition-colors active:scale-90"
+                            title="Xóa"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 text-xs text-gray-500 font-semibold">Không tìm thấy thẻ nào.</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: DATA IMPORT/EXPORT */}
+          {adminTab === "data" && (
+            <div className="bg-white/[0.01] border border-white/5 rounded-24 p-5">
+              <ImportExport 
+                isInline={true}
+                onClose={() => setAdminTab("list")}
+                onRefreshCards={loadCards}
+              />
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Column 2: Editor Pane (on desktop, fits inline in grid) */}
+        {adminTab === "list" && (
+          <div className="admin-editor-pane">
+            {isEditorOpen ? (
+              <div className="drawer-overlay" onClick={() => setIsEditorOpen(false)}>
+                <div className="drawer-content" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-lg font-bold text-gray-100 flex items-center gap-2">
+                      <Database className="w-5 h-5 text-indigo-400" />
+                      {formMode === "create" ? "Thêm Thẻ Mới" : "Chỉnh Sửa Thẻ"}
+                    </h3>
+                    <button 
+                      type="button"
+                      onClick={() => setIsEditorOpen(false)}
+                      className="p-2 rounded-full hover:bg-white/10 transition-colors md:hidden"
+                      title="Đóng"
+                    >
+                      <X className="w-5 h-5 text-gray-400" />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSaveCard} className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-400">Câu hỏi *</label>
+                      <textarea
+                        required
+                        value={question}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        placeholder="Nhập câu hỏi..."
+                        rows={2}
+                        className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl p-3 text-sm text-gray-200 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-400">Câu trả lời *</label>
+                      <textarea
+                        required
+                        value={answer}
+                        onChange={(e) => setAnswer(e.target.value)}
+                        placeholder="Nhập nội dung câu trả lời..."
+                        rows={4}
+                        className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl p-3 text-sm text-gray-200 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-gray-400">Code mẫu (không bắt buộc)</label>
+                      <textarea
+                        value={codeSnippet}
+                        onChange={(e) => setCodeSnippet(e.target.value)}
+                        placeholder="Dán code snippet mẫu..."
+                        rows={3}
+                        className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl p-3 text-xs font-mono text-emerald-400 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-gray-400">Chủ đề (Category)</label>
+                        <input
+                          type="text"
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          placeholder="VD: SQL, Database, JS"
+                          className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-gray-400">Độ khó (Difficulty)</label>
+                        <select
+                          value={difficulty}
+                          onChange={(e) => setDifficulty(e.target.value as Card["difficulty"])}
+                          className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 rounded-xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none"
+                        >
+                          <option value="Junior">Junior</option>
+                          <option value="Mid">Mid</option>
+                          <option value="Senior">Senior</option>
+                          <option value="Tech Lead">Tech Lead</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 pt-2">
+                      <button
+                        type="submit"
+                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all rounded-xl font-semibold text-white shadow-lg shadow-indigo-600/20 cursor-pointer"
+                      >
+                        <Save className="w-4 h-4" />
+                        Lưu Thẻ
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditorOpen(false)}
+                        className="px-4 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-semibold text-gray-300 border border-white/10 transition-all cursor-pointer"
+                      >
+                        Hủy
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <div className="admin-editor-placeholder">
+                <Database className="w-10 h-10 text-indigo-500/20 mb-3 animate-pulse" />
+                <p className="text-xs text-gray-400 font-bold mb-1">Trình soạn thảo thẻ</p>
+                <p className="text-[10px] text-gray-500 max-w-[200px] leading-relaxed">Chọn một thẻ để chỉnh sửa nội dung hoặc nhấn nút <strong>&quot;Thêm thẻ&quot;</strong> để bắt đầu viết thẻ mới.</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
